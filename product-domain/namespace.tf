@@ -1,13 +1,13 @@
 resource "kubernetes_namespace_v1" "namespace" {
-    metadata {
-        annotations = {
-            name = "example-annotation"
-        }
+  metadata {
+    annotations = {
+      name = "example-annotation"
+    }
 
-        labels = {
-            mylabel = local.microservicelabel
-        }
+    labels = {
+      mylabel = local.microservicelabel
+    }
 
-        name = "micro-service-practace"
+    name = "micro-service-practice"
   }
 }

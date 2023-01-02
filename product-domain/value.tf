@@ -4,5 +4,5 @@ variable "environment" {
 }
 
 locals {
-    microservicelabel = "microservicelabel"
+  microservicelabel = "microservicelabel"
 }
