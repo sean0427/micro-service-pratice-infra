@@ -5,7 +5,7 @@ resource "kubernetes_config_map_v1" "postgres_config" {
   }
 
   data = {
-    POSTGRES_DB = "test"
+    POSTGRES_DB   = "test"
     POSTGRES_USER = "admin"
   }
 }
@@ -21,14 +21,42 @@ resource "kubernetes_secret_v1" "postgres_secret" {
   }
 }
 
-resource "kubernetes_stateful_set_v1" "database" {
+resource "kubernetes_service_v1" "postgres_service" {
   metadata {
-    name = "product-domain-database-postgresql"
+    name      = "product-domain-database-postgresql-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
-      type = "postgresql"
-      env  = var.environment
-      app  = "micro_service_pratice_product"
+      type    = "postgresql"
+      env     = var.environment
+      mylabel = local.microservicelabel
+      app     = "micro_service_pratice_product"
+    }
+
+  }
+
+  spec {
+    selector = {
+      app     = "micro_service_pratice_product"
+      mylabel = local.microservicelabel
+      type    = "postgresql"
+    }
+
+    port {
+      port        = 5432
+      target_port = 5432
+    }
+  }
+}
+
+resource "kubernetes_stateful_set_v1" "database" {
+  metadata {
+    name      = "product-domain-database-postgresql"
+    namespace = kubernetes_namespace_v1.namespace.metadata[0].name
+    labels = {
+      type    = "postgresql"
+      env     = var.environment
+      mylabel = local.microservicelabel
+      app     = "micro_service_pratice_product"
     }
   }
 
@@ -39,14 +67,17 @@ resource "kubernetes_stateful_set_v1" "database" {
 
     selector {
       match_labels = {
-        k8s-app = "postgresql"
+        app     = "micro_service_pratice_product"
+        mylabel = local.microservicelabel
+        type    = "postgresql"
       }
     }
     template {
       metadata {
         labels = {
-          k8s-app = "postgresql"
+          app     = "micro_service_pratice_product"
           mylabel = local.microservicelabel
+          type    = "postgresql"
         }
 
         annotations = {}
