@@ -62,7 +62,7 @@ resource "kubernetes_deployment_v1" "user_domain_service" {
       spec {
         container {
           name  = "user-service"
-          image = "ghcr.io/sean0427/micro-service-pratice--domain:main"
+          image = "ghcr.io/sean0427/micro-service-pratice-user-domain:main"
 
           env_from {
             secret_ref {
