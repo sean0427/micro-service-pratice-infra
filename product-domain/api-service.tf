@@ -3,18 +3,18 @@ resource "kubernetes_service_v1" "service_lb" {
     name      = "product-domain-database-postgresql-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
-      type    = "web_service"
+      type    = "web-service"
       env     = var.environment
-      app     = "micro_service_pratice_product"
+      app     = "micro-service-pratice-product"
       mylabel = local.microservicelabel
     }
 
   }
   spec {
     selector = {
-      app     = "micro_service_pratice_product"
+      app     = "micro-service-pratice-product"
       mylabel = local.microservicelabel
-      type    = "web_service"
+      type    = "web-service"
     }
 
     port {
@@ -32,9 +32,9 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
     name      = "product-domain-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
-      type    = "web_service"
+      type    = "web-service"
       env     = var.environment
-      app     = "micro_service_pratice_product"
+      app     = "micro-service-pratice-product"
       mylabel = local.microservicelabel
     }
   }
@@ -43,18 +43,18 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
     replicas = 1
     selector {
       match_labels = {
-        app     = "micro_service_pratice_product"
+        app     = "micro-service-pratice-product"
         mylabel = local.microservicelabel
-        type    = "web_service"
+        type    = "web-service"
       }
     }
 
     template {
       metadata {
         labels = {
-          app     = "micro_service_pratice_product"
+          app     = "micro-service-pratice-product"
           mylabel = local.microservicelabel
-          type    = "web_service"
+          type    = "web-service"
         }
 
         annotations = {}
