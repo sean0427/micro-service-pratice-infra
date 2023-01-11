@@ -8,6 +8,7 @@ resource "kubernetes_namespace_v1" "namespace" {
       mylabel = local.microservicelabel
     }
 
-    name = "micro-service-practice"
+    # TODO: create on general config
+    name = "micro-service-practice-user"
   }
 }

@@ -1,20 +1,20 @@
 resource "kubernetes_service_v1" "service_lb" {
   metadata {
-    name      = "-domain-database-postgresql-service"
+    name      = "user-domain-database-postgresql-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
-      type    = "web_service"
+      type    = "web-service"
       env     = var.environment
-      app     = "micro_service_pratice_"
+      app     = "micro-service-pratice-user"
       mylabel = local.microservicelabel
     }
 
   }
   spec {
     selector = {
-      app     = "micro_service_pratice_"
+      app     = "micro-service-pratice-user"
       mylabel = local.microservicelabel
-      type    = "web_service"
+      type    = "web-service"
     }
 
     port {
@@ -25,16 +25,16 @@ resource "kubernetes_service_v1" "service_lb" {
   }
 }
 
-resource "kubernetes_deployment_v1" "_domain_service" {
+resource "kubernetes_deployment_v1" "user_domain_service" {
   // TODO
 
   metadata {
-    name      = "-domain-service"
+    name      = "user-domain-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
-      type    = "web_service"
+      type    = "web-service"
       env     = var.environment
-      app     = "micro_service_pratice_"
+      app     = "micro-service-pratice-user"
       mylabel = local.microservicelabel
     }
   }
@@ -43,25 +43,25 @@ resource "kubernetes_deployment_v1" "_domain_service" {
     replicas = 1
     selector {
       match_labels = {
-        app     = "micro_service_pratice_"
+        app     = "micro-service-pratice-user"
         mylabel = local.microservicelabel
-        type    = "web_service"
+        type    = "web-service"
       }
     }
 
     template {
       metadata {
         labels = {
-          app     = "micro_service_pratice_"
+          app     = "micro-service-pratice-user"
           mylabel = local.microservicelabel
-          type    = "web_service"
+          type    = "web-service"
         }
 
         annotations = {}
       }
       spec {
         container {
-          name  = "-service"
+          name  = "user-service"
           image = "ghcr.io/sean0427/micro-service-pratice--domain:main"
 
           env_from {
