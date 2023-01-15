@@ -26,8 +26,6 @@ resource "kubernetes_service_v1" "service_lb" {
 }
 
 resource "kubernetes_deployment_v1" "user_domain_service" {
-  // TODO
-
   metadata {
     name      = "user-domain-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
@@ -82,4 +80,8 @@ resource "kubernetes_deployment_v1" "user_domain_service" {
       }
     }
   }
+ 
+  depends_on = [
+    kubernetes_stateful_set_v1.database
+  ]
 }

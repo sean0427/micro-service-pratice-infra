@@ -5,8 +5,10 @@ resource "kubernetes_config_map_v1" "postgres_config" {
   }
 
   data = {
-    POSTGRES_DB   = "test"
-    POSTGRES_USER = "admin"
+    POSTGRES_DB      = "test"
+    POSTGRES_USER    = "admin"
+    POSTGRES_ADDRESS = "${kubernetes_service_v1.postgres_service.metadata[0].name}.${kubernetes_namespace_v1.namespace.metadata[0].name}"
+    POSTGRES_PORT    = kubernetes_service_v1.postgres_service.spec[0].port[0].target_port
   }
 }
 
@@ -127,17 +129,21 @@ resource "kubernetes_stateful_set_v1" "database" {
 
           resources {
             limits = {
-              cpu    = "10m"
-              memory = "10Mi"
+              cpu    = "500m"
+              memory = "100Mi"
             }
 
             requests = {
-              cpu    = "10m"
-              memory = "10Mi"
+              cpu    = "100m"
+              memory = "50Mi"
             }
           }
 
 
+          volume_mount {
+            name       = "user-server-volume-claim"
+            mount_path = "/var/lib/postgresql/data"
+          }
 
         }
         volume {
@@ -154,6 +160,22 @@ resource "kubernetes_stateful_set_v1" "database" {
 
       rolling_update {
         partition = 1
+      }
+    }
+
+    volume_claim_template {
+      metadata {
+        name      = "user-server-volume-claim"
+        namespace = kubernetes_namespace_v1.namespace.metadata[0].name
+      }
+      spec {
+        access_modes       = ["ReadWriteMany"]
+        storage_class_name = "local"
+        resources {
+          requests = {
+            storage = "500Mi"
+          }
+        }
       }
     }
   }
