@@ -3,7 +3,7 @@ resource "kubernetes_service_v1" "service_lb" {
     name      = "user-domain-database-postgresql-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
-      type    = "web-service"
+      type    = "grpc-service"
       env     = var.environment
       app     = "micro-service-pratice-user"
       mylabel = local.microservicelabel
@@ -14,12 +14,12 @@ resource "kubernetes_service_v1" "service_lb" {
     selector = {
       app     = "micro-service-pratice-user"
       mylabel = local.microservicelabel
-      type    = "web-service"
+      type    = "grpc-service"
     }
 
     port {
       port        = 80
-      target_port = 8080
+      target_port = 50051
     }
     type = "LoadBalancer"
   }
@@ -30,7 +30,7 @@ resource "kubernetes_deployment_v1" "user_domain_service" {
     name      = "user-domain-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
-      type    = "web-service"
+      type    = "grpc-service"
       env     = var.environment
       app     = "micro-service-pratice-user"
       mylabel = local.microservicelabel
@@ -43,7 +43,7 @@ resource "kubernetes_deployment_v1" "user_domain_service" {
       match_labels = {
         app     = "micro-service-pratice-user"
         mylabel = local.microservicelabel
-        type    = "web-service"
+        type    = "grpc-service"
       }
     }
 
@@ -52,15 +52,16 @@ resource "kubernetes_deployment_v1" "user_domain_service" {
         labels = {
           app     = "micro-service-pratice-user"
           mylabel = local.microservicelabel
-          type    = "web-service"
+          type    = "grpc-service"
         }
 
         annotations = {}
       }
       spec {
         container {
-          name  = "user-service"
-          image = "ghcr.io/sean0427/micro-service-pratice-user-domain:main"
+          name              = "user-service"
+          image             = "user-domain:latest"
+          image_pull_policy = "IfNotPresent"
 
           env_from {
             secret_ref {
@@ -74,13 +75,13 @@ resource "kubernetes_deployment_v1" "user_domain_service" {
           }
 
           port {
-            container_port = 8080
+            container_port = 50051
           }
         }
       }
     }
   }
- 
+
   depends_on = [
     kubernetes_stateful_set_v1.database
   ]
