@@ -1,13 +1,12 @@
 resource "kubernetes_service_v1" "user_service_lb" {
   metadata {
-    name      = "user-domain-database-postgresql-service"
+    name      = "user-domain-service-lb"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
       mylabel = local.microservicelabel
       type    = "grpc-service"
       env     = var.environment
-      expose  = var.expose_label
     }
 
   }
@@ -64,7 +63,7 @@ resource "kubernetes_deployment_v1" "user_domain_service" {
       spec {
         container {
           name              = "user-service"
-          image             = "user-domain:latest"
+          image             = "ghcr.io/sean0427/micro-service-user-domain:main"
           image_pull_policy = "IfNotPresent"
 
           env_from {

@@ -1,11 +1,11 @@
-resource "kubernetes_service_v1" "product_service_lb" {
+resource "kubernetes_service_v1" "auth_ervice_lb" {
   metadata {
-    name      = "product-domain-service-lb"
+    name      = "auth-domain-service-lb"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
       mylabel = local.microservicelabel
-      type    = "web-service"
+      type    = "grpc-service"
       env     = var.environment
       expose  = var.expose_label
     }
@@ -15,28 +15,26 @@ resource "kubernetes_service_v1" "product_service_lb" {
     selector = {
       app     = local.app
       mylabel = local.microservicelabel
-      type    = "web-service"
+      type    = "grpc-service"
       env     = var.environment
     }
 
     port {
       port        = 80
-      target_port = 8080
+      target_port = 50051
     }
     type = "LoadBalancer"
   }
 }
 
-resource "kubernetes_deployment_v1" "product_domain_service" {
-  // TODO
-
+resource "kubernetes_deployment_v1" "auth_domain_service" {
   metadata {
-    name      = "product-domain-service"
+    name      = "auth-domain-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
       mylabel = local.microservicelabel
-      type    = "web-service"
+      type    = "grpc-service"
       env     = var.environment
     }
   }
@@ -47,7 +45,7 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
       match_labels = {
         app     = local.app
         mylabel = local.microservicelabel
-        type    = "web-service"
+        type    = "grpc-service"
         env     = var.environment
       }
     }
@@ -57,7 +55,7 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
         labels = {
           app     = local.app
           mylabel = local.microservicelabel
-          type    = "web-service"
+          type    = "grpc-service"
           env     = var.environment
         }
 
@@ -65,25 +63,27 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
       }
       spec {
         container {
-          name  = "product-service"
-          image = "ghcr.io/sean0427/micro-service-product-domain:main"
+          name              = "auth-service"
+          # TODO: authentication docker
+          image             = "auth-domain:latest"
+          image_pull_policy = "IfNotPresent"
 
           env_from {
             secret_ref {
-              name = kubernetes_secret_v1.postgres_secret.metadata[0].name
-            }
-          }
-          env_from {
-            config_map_ref {
-              name = kubernetes_config_map_v1.postgres_config.metadata[0].name
+              name = kubernetes_secret_v1.redis_secret.metadata[0].name
             }
           }
 
           port {
-            container_port = 8080
+            container_port = 50051
           }
         }
       }
     }
   }
+
+  depends_on = [
+    kubernetes_stateful_set_v1.database
+  ]
 }
+
