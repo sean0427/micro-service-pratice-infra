@@ -15,4 +15,10 @@ variable "resource_group" {
 
 locals {
   microservicelabel = "microservicelabel"
+  app               = local.app
+}
+
+variable "expose_label" {
+  type    = string
+  default = "general"
 }

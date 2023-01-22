@@ -3,7 +3,7 @@ module "product-domain" {
 
   resource_group = local.groups
   namespace_name = local.kubernetes_namesapce
-  environment = "local"
+  environment    = "local"
 }
 
 module "user-domain" {
@@ -11,5 +11,5 @@ module "user-domain" {
 
   resource_group = local.groups
   namespace_name = local.kubernetes_namesapce
-  environment = "local"
+  environment    = "local"
 }

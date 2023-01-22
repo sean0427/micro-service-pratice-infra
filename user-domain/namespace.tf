@@ -9,6 +9,6 @@ resource "kubernetes_namespace_v1" "namespace" {
     }
 
     # TODO: create on general config
-    name = "micro-service-practice-user"
+    name = "micro-service-user"
   }
 }

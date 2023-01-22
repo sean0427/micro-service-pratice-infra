@@ -18,6 +18,27 @@ locals {
   app               = local.app
 }
 
+variable "redis_cpu" {
+  type = object({
+    limits   = string
+    requests = string
+  })
+  default = {
+    limits   = "10m"
+    requests = "10m"
+  }
+}
+
+variable "redis_memory" {
+  type = object({
+    limits   = string
+    requests = string
+  })
+  default = {
+    limits   = "100Mi"
+    requests = "100Mi"
+  }
+}
 variable "expose_label" {
   type    = string
   default = "general"

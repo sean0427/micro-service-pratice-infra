@@ -1,20 +1,22 @@
-resource "kubernetes_service_v1" "service_lb" {
+resource "kubernetes_service_v1" "user_service_lb" {
   metadata {
     name      = "user-domain-database-postgresql-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
+      app     = local.app
+      mylabel = local.microservicelabel
       type    = "grpc-service"
       env     = var.environment
-      app     = "micro-service-pratice-user"
-      mylabel = local.microservicelabel
+      expose  = var.expose_label
     }
 
   }
   spec {
     selector = {
-      app     = "micro-service-pratice-user"
+      app     = local.app
       mylabel = local.microservicelabel
       type    = "grpc-service"
+      env     = var.environment
     }
 
     port {
@@ -32,7 +34,7 @@ resource "kubernetes_deployment_v1" "user_domain_service" {
     labels = {
       type    = "grpc-service"
       env     = var.environment
-      app     = "micro-service-pratice-user"
+      app     = local.app
       mylabel = local.microservicelabel
     }
   }
@@ -41,18 +43,20 @@ resource "kubernetes_deployment_v1" "user_domain_service" {
     replicas = 1
     selector {
       match_labels = {
-        app     = "micro-service-pratice-user"
+        app     = local.app
         mylabel = local.microservicelabel
         type    = "grpc-service"
+        env     = var.environment
       }
     }
 
     template {
       metadata {
         labels = {
-          app     = "micro-service-pratice-user"
+          app     = local.app
           mylabel = local.microservicelabel
           type    = "grpc-service"
+          env     = var.environment
         }
 
         annotations = {}

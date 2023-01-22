@@ -8,6 +8,6 @@ resource "kubernetes_namespace_v1" "namespace" {
       mylabel = local.microservicelabel
     }
 
-    name = "micro-service"
+    name = "micro-service-authorization"
   }
 }
