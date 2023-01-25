@@ -1,11 +1,11 @@
-resource "kubernetes_service_v1" "postgres_service" {
+resource "kubernetes_service_v1" "redis_service" {
   metadata {
-    name      = "user-domain-database-postgresql-service"
+    name      = "user-domain-database-redis-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
-      mylabel = local.microservicelabel
-      type    = "postgresql"
+      mylabel = var.microservicelabel
+      type    = "redis"
       env     = var.environment
     }
 
@@ -14,8 +14,8 @@ resource "kubernetes_service_v1" "postgres_service" {
   spec {
     selector = {
       app     = local.app
-      mylabel = local.microservicelabel
-      type    = "postgresql"
+      mylabel = var.microservicelabel
+      type    = "redis"
       env     = var.environment
     }
 
@@ -29,7 +29,7 @@ resource "kubernetes_service_v1" "postgres_service" {
 
 resource "kubernetes_secret_v1" "redis_secret" {
   metadata {
-    name      = "postgres-secret"
+    name      = "redis-secret"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
   }
 
@@ -44,8 +44,8 @@ resource "kubernetes_stateful_set_v1" "redis" {
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
-      mylabel = local.microservicelabel
-      type    = "postgresql"
+      mylabel = var.microservicelabel
+      type    = "redis"
       env     = var.environment
     }
   }
@@ -57,8 +57,8 @@ resource "kubernetes_stateful_set_v1" "redis" {
     selector {
       match_labels = {
         app     = local.app
-        mylabel = local.microservicelabel
-        type    = "postgresql"
+        mylabel = var.microservicelabel
+        type    = "redis"
         env     = var.environment
       }
     }
@@ -67,8 +67,8 @@ resource "kubernetes_stateful_set_v1" "redis" {
       metadata {
         labels = {
           app     = local.app
-          mylabel = local.microservicelabel
-          type    = "postgresql"
+          mylabel = var.microservicelabel
+          type    = "redis"
           env     = var.environment
         }
 

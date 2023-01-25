@@ -5,9 +5,9 @@ resource "kubernetes_namespace_v1" "namespace" {
     }
 
     labels = {
-      mylabel = local.microservicelabel
+      mylabel = var.microservicelabel
     }
 
-    name = "micro-service-authorization"
+    name = var.namespace_name
   }
 }

@@ -44,7 +44,7 @@ resource "kubernetes_service_v1" "postgres_service" {
     labels = {
       type    = "database"
       env     = var.environment
-      mylabel = local.microservicelabel
+      mylabel = var.microservicelabel
       app     = local.app
     }
 
@@ -53,7 +53,7 @@ resource "kubernetes_service_v1" "postgres_service" {
   spec {
     selector = {
       app     = local.app
-      mylabel = local.microservicelabel
+      mylabel = var.microservicelabel
       type    = "postgresql"
       env     = var.environment
     }
@@ -71,7 +71,7 @@ resource "kubernetes_stateful_set_v1" "database" {
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
-      mylabel = local.microservicelabel
+      mylabel = var.microservicelabel
       type    = "postgresql"
       env     = var.environment
     }
@@ -85,7 +85,7 @@ resource "kubernetes_stateful_set_v1" "database" {
     selector {
       match_labels = {
         app     = local.app
-        mylabel = local.microservicelabel
+        mylabel = var.microservicelabel
         type    = "postgresql"
         env     = var.environment
       }
@@ -94,7 +94,7 @@ resource "kubernetes_stateful_set_v1" "database" {
       metadata {
         labels = {
           app     = local.app
-          mylabel = local.microservicelabel
+          mylabel = var.microservicelabel
           type    = "postgresql"
           env     = var.environment
         }

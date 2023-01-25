@@ -13,13 +13,10 @@ variable "resource_group" {
   default = "test"
 }
 
-locals {
-  app = "user-domain"
-}
-
 variable "microservicelabel" {
   type    = string
   default = "microservicelabel"
+
 }
 
 variable "expose_label" {
@@ -27,3 +24,8 @@ variable "expose_label" {
   default = "general"
 }
 
+
+variable "name_prefix" {
+  type    = string
+  default = "general"
+}

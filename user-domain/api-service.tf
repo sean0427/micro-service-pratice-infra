@@ -1,10 +1,10 @@
-resource "kubernetes_service_v1" "user_service_lb" {
+resource "kubernetes_service_v1" "user_service" {
   metadata {
     name      = "user-domain-service-lb"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
-      mylabel = local.microservicelabel
+      mylabel = var.microservicelabel
       type    = "grpc-service"
       env     = var.environment
     }
@@ -13,7 +13,7 @@ resource "kubernetes_service_v1" "user_service_lb" {
   spec {
     selector = {
       app     = local.app
-      mylabel = local.microservicelabel
+      mylabel = var.microservicelabel
       type    = "grpc-service"
       env     = var.environment
     }
@@ -22,8 +22,11 @@ resource "kubernetes_service_v1" "user_service_lb" {
       port        = 80
       target_port = 50051
     }
-    type = "LoadBalancer"
+    type = "ClusterIP"
   }
+  depends_on = [
+    kubernetes_deployment_v1.user_domain_service
+  ]
 }
 
 resource "kubernetes_deployment_v1" "user_domain_service" {
@@ -34,7 +37,7 @@ resource "kubernetes_deployment_v1" "user_domain_service" {
       type    = "grpc-service"
       env     = var.environment
       app     = local.app
-      mylabel = local.microservicelabel
+      mylabel = var.microservicelabel
     }
   }
 
@@ -43,7 +46,7 @@ resource "kubernetes_deployment_v1" "user_domain_service" {
     selector {
       match_labels = {
         app     = local.app
-        mylabel = local.microservicelabel
+        mylabel = var.microservicelabel
         type    = "grpc-service"
         env     = var.environment
       }
@@ -53,7 +56,7 @@ resource "kubernetes_deployment_v1" "user_domain_service" {
       metadata {
         labels = {
           app     = local.app
-          mylabel = local.microservicelabel
+          mylabel = var.microservicelabel
           type    = "grpc-service"
           env     = var.environment
         }
@@ -63,8 +66,8 @@ resource "kubernetes_deployment_v1" "user_domain_service" {
       spec {
         container {
           name              = "user-service"
-          image             = "ghcr.io/sean0427/micro-service-user-domain:main"
-          image_pull_policy = "IfNotPresent"
+          image             = "ghcr.io/sean0427/micro-service-pratice-user-domain:main"
+          image_pull_policy = "Always"
 
           env_from {
             secret_ref {
