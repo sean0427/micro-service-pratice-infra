@@ -1,15 +1,35 @@
-module "product-domain" {
-  source = "../product-domain"
+# TODO
+# module "product-domain" {
+#   source = "../product-domain"
+
+# resource_group = local.groups
+# environment    = local.environment
+# namespace_name = "product-domain"
+# }
+
+
+module "general" {
+  source = "../general"
 
   resource_group = local.groups
-  namespace_name = local.kubernetes_namesapce
-  environment = "local"
+  environment    = local.environment
 }
 
 module "user-domain" {
   source = "../user-domain"
 
   resource_group = local.groups
-  namespace_name = local.kubernetes_namesapce
-  environment = "local"
+  environment    = local.environment
+  namespace_name = local.user_name_space
+}
+
+
+module "auth-server" {
+  source = "../authentication"
+
+  environment    = local.environment
+  namespace_name = "p-auth-server"
+  resource_group = local.groups
+
+  user_domain_path = "${module.user-domain.web-serivce-cluster-ip}.${local.user_name_space}:80"
 }

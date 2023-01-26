@@ -14,5 +14,14 @@ variable "resource_group" {
 }
 
 locals {
-  microservicelabel = "microservicelabel"
+  app = "product-domain"
+}
+
+variable "microservicelabel" {
+  type    = string
+  default = "microservicelabel"
+}
+variable "expose_label" {
+  type    = string
+  default = "general"
 }
