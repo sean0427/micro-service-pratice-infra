@@ -5,7 +5,7 @@ resource "kubernetes_service_v1" "auth_service" {
     labels = {
       app     = local.app
       mylabel = var.microservicelabel
-      type    = "grpc-service"
+      type    = "restful-api-service"
       env     = var.environment
       expose  = var.expose_label
     }
@@ -15,7 +15,7 @@ resource "kubernetes_service_v1" "auth_service" {
     selector = {
       app     = local.app
       mylabel = var.microservicelabel
-      type    = "grpc-service"
+      type    = "restful-api-service"
       env     = var.environment
     }
 
@@ -39,8 +39,8 @@ resource "kubernetes_config_map_v1" "auth_serivce_config" {
 
 
   data = {
-    USER_AUTHGRPC_ADDR  = var.user_domain_path
-    REDIS_ADDRESS       = "${kubernetes_service_v1.redis_service.metadata[0].name}:${kubernetes_service_v1.redis_service.spec[0].port[0].port}"
+    USER_AUTHGRPC_ADDR = var.user_domain_path
+    REDIS_ADDRESS      = "${kubernetes_service_v1.redis_service.metadata[0].name}:${kubernetes_service_v1.redis_service.spec[0].port[0].port}"
 
     JWT_SECRET_KEY_FILE = "/etc/secret/jwt/JWT_KEY"
   }
@@ -48,12 +48,12 @@ resource "kubernetes_config_map_v1" "auth_serivce_config" {
 
 resource "kubernetes_deployment_v1" "auth_service" {
   metadata {
-    name      = "auth-domain-service"
+    name      = "auth-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
       mylabel = var.microservicelabel
-      type    = "grpc-service"
+      type    = "restful-api-service"
       env     = var.environment
     }
   }
@@ -64,7 +64,7 @@ resource "kubernetes_deployment_v1" "auth_service" {
       match_labels = {
         app     = local.app
         mylabel = var.microservicelabel
-        type    = "grpc-service"
+        type    = "restful-api-service"
         env     = var.environment
       }
     }
@@ -74,7 +74,7 @@ resource "kubernetes_deployment_v1" "auth_service" {
         labels = {
           app     = local.app
           mylabel = var.microservicelabel
-          type    = "grpc-service"
+          type    = "restful-api-service"
           env     = var.environment
         }
 
@@ -84,7 +84,7 @@ resource "kubernetes_deployment_v1" "auth_service" {
         container {
           name = "auth-service"
           # TODO: authentication docker
-          image             = "auth-domain:latest"
+          image             = "ghcr.io/sean0427/micro-service-pratice-authentication-server:main"
           image_pull_policy = "IfNotPresent"
 
           env_from {

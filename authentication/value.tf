@@ -51,6 +51,5 @@ variable "expose_label" {
 }
 
 variable "user_domain_path" {
-  type    = string
-  default = "TODO"
+  type = string
 }
