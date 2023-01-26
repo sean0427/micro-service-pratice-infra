@@ -15,7 +15,13 @@ variable "resource_group" {
 
 locals {
   microservicelabel = "microservicelabel"
-  app               = local.app
+  app               = "auth-server"
+}
+
+variable "microservicelabel" {
+  type    = string
+  default = "microservicelabel"
+
 }
 
 variable "redis_cpu" {
@@ -42,4 +48,8 @@ variable "redis_memory" {
 variable "expose_label" {
   type    = string
   default = "general"
+}
+
+variable "user_domain_path" {
+  type = string
 }

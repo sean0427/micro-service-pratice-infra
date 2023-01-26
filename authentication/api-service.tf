@@ -1,11 +1,11 @@
-resource "kubernetes_service_v1" "auth_ervice_lb" {
+resource "kubernetes_service_v1" "auth_service" {
   metadata {
-    name      = "auth-domain-service-lb"
+    name      = "auth-server-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
-      mylabel = local.microservicelabel
-      type    = "grpc-service"
+      mylabel = var.microservicelabel
+      type    = "restful-api-service"
       env     = var.environment
       expose  = var.expose_label
     }
@@ -14,27 +14,46 @@ resource "kubernetes_service_v1" "auth_ervice_lb" {
   spec {
     selector = {
       app     = local.app
-      mylabel = local.microservicelabel
-      type    = "grpc-service"
+      mylabel = var.microservicelabel
+      type    = "restful-api-service"
       env     = var.environment
     }
 
     port {
       port        = 80
-      target_port = 50051
+      target_port = 8080
     }
-    type = "LoadBalancer"
+    type = "ClusterIP"
+  }
+
+  depends_on = [
+    kubernetes_deployment_v1.auth_service
+  ]
+}
+
+resource "kubernetes_config_map_v1" "auth_serivce_config" {
+  metadata {
+    name      = "auth-server-config-map"
+    namespace = kubernetes_namespace_v1.namespace.metadata[0].name
+  }
+
+
+  data = {
+    USER_AUTHGRPC_ADDR = var.user_domain_path
+    REDIS_ADDRESS      = "${kubernetes_service_v1.redis_service.metadata[0].name}:${kubernetes_service_v1.redis_service.spec[0].port[0].port}"
+
+    JWT_SECRET_KEY_FILE = "/etc/secret/jwt/JWT_KEY"
   }
 }
 
-resource "kubernetes_deployment_v1" "auth_domain_service" {
+resource "kubernetes_deployment_v1" "auth_service" {
   metadata {
-    name      = "auth-domain-service"
+    name      = "auth-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
-      mylabel = local.microservicelabel
-      type    = "grpc-service"
+      mylabel = var.microservicelabel
+      type    = "restful-api-service"
       env     = var.environment
     }
   }
@@ -44,8 +63,8 @@ resource "kubernetes_deployment_v1" "auth_domain_service" {
     selector {
       match_labels = {
         app     = local.app
-        mylabel = local.microservicelabel
-        type    = "grpc-service"
+        mylabel = var.microservicelabel
+        type    = "restful-api-service"
         env     = var.environment
       }
     }
@@ -54,8 +73,8 @@ resource "kubernetes_deployment_v1" "auth_domain_service" {
       metadata {
         labels = {
           app     = local.app
-          mylabel = local.microservicelabel
-          type    = "grpc-service"
+          mylabel = var.microservicelabel
+          type    = "restful-api-service"
           env     = var.environment
         }
 
@@ -63,9 +82,9 @@ resource "kubernetes_deployment_v1" "auth_domain_service" {
       }
       spec {
         container {
-          name              = "auth-service"
+          name = "auth-service"
           # TODO: authentication docker
-          image             = "auth-domain:latest"
+          image             = "ghcr.io/sean0427/micro-service-pratice-authentication-server:main"
           image_pull_policy = "IfNotPresent"
 
           env_from {
@@ -74,16 +93,37 @@ resource "kubernetes_deployment_v1" "auth_domain_service" {
             }
           }
 
+          env_from {
+            config_map_ref {
+              name = kubernetes_config_map_v1.auth_serivce_config.metadata[0].name
+            }
+          }
+
+
+          volume_mount {
+            name       = "jwt-token-secret"
+            mount_path = "/etc/secret/jwt"
+            read_only  = true
+          }
+
           port {
-            container_port = 50051
+            container_port = 8080
+          }
+        }
+
+        volume {
+          name = "jwt-token-secret"
+          secret {
+            secret_name = kubernetes_secret_v1.JWT_SECRET_KEY.metadata[0].name
           }
         }
       }
+
     }
   }
 
   depends_on = [
-    kubernetes_stateful_set_v1.database
+    kubernetes_service_v1.redis_service
   ]
 }
 

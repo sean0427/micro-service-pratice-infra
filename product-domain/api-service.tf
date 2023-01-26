@@ -4,7 +4,7 @@ resource "kubernetes_service_v1" "product_service_lb" {
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
-      mylabel = local.microservicelabel
+      mylabel = var.microservicelabel
       type    = "web-service"
       env     = var.environment
       expose  = var.expose_label
@@ -14,7 +14,7 @@ resource "kubernetes_service_v1" "product_service_lb" {
   spec {
     selector = {
       app     = local.app
-      mylabel = local.microservicelabel
+      mylabel = var.microservicelabel
       type    = "web-service"
       env     = var.environment
     }
@@ -35,7 +35,7 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
-      mylabel = local.microservicelabel
+      mylabel = var.microservicelabel
       type    = "web-service"
       env     = var.environment
     }
@@ -46,7 +46,7 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
     selector {
       match_labels = {
         app     = local.app
-        mylabel = local.microservicelabel
+        mylabel = var.microservicelabel
         type    = "web-service"
         env     = var.environment
       }
@@ -56,7 +56,7 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
       metadata {
         labels = {
           app     = local.app
-          mylabel = local.microservicelabel
+          mylabel = var.microservicelabel
           type    = "web-service"
           env     = var.environment
         }
