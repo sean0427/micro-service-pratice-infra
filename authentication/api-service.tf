@@ -40,7 +40,8 @@ resource "kubernetes_config_map_v1" "auth_serivce_config" {
 
   data = {
     USER_AUTHGRPC_ADDR  = var.user_domain_path
-    REDIS_ADDRESS       = kubernetes_service_v1.redis_service.metadata[0].name
+    REDIS_ADDRESS       = "${kubernetes_service_v1.redis_service.metadata[0].name}:${kubernetes_service_v1.redis_service.spec[0].port[0].port}"
+
     JWT_SECRET_KEY_FILE = "/etc/secret/jwt/JWT_KEY"
   }
 }

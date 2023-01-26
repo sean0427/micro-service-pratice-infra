@@ -5,6 +5,7 @@ resource "kubernetes_secret_v1" "JWT_SECRET_KEY" {
   }
   data = {
     JWT_KEY = tls_private_key.JWT_KEY.private_key_pem
+    JWT_KEY_PUBLIC = tls_private_key.JWT_KEY.public_key_pem
   }
 }
 
