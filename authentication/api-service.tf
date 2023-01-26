@@ -1,6 +1,6 @@
 resource "kubernetes_service_v1" "auth_service" {
   metadata {
-    name      = "auth-domain-service-lb"
+    name      = "auth-server-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app

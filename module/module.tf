@@ -20,7 +20,7 @@ module "user-domain" {
 
   resource_group = local.groups
   environment    = local.environment
-  namespace_name = "p-user-domain"
+  namespace_name = local.user_name_space
 }
 
 
@@ -31,5 +31,5 @@ module "auth-server" {
   namespace_name = "p-auth-server"
   resource_group = local.groups
 
-  user_domain_path = module.user-domain.web-serivce-cluster-ip
+  user_domain_path = "${module.user-domain.web-serivce-cluster-ip}.${local.user_name_space}:80"
 }

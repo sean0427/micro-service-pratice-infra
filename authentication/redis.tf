@@ -1,6 +1,6 @@
 resource "kubernetes_service_v1" "redis_service" {
   metadata {
-    name      = "user-domain-database-redis-service"
+    name      = "authauthentication-redis-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app

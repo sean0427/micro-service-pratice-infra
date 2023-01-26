@@ -1,6 +1,6 @@
 resource "kubernetes_service_v1" "user_service" {
   metadata {
-    name      = "user-domain-service-lb"
+    name      = "user-domain-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
