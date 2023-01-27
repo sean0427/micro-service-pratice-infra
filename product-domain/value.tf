@@ -25,3 +25,31 @@ variable "expose_label" {
   type    = string
   default = "general"
 }
+
+
+variable "mongodb_cpu" {
+  type = object({
+    limits   = string
+    requests = string
+  })
+  default = {
+    limits   = "10m"
+    requests = "100m"
+  }
+}
+
+variable "mongodb_memory" {
+  type = object({
+    limits   = string
+    requests = string
+  })
+  default = {
+    limits   = "100Mi"
+    requests = "100Mi"
+  }
+}
+
+variable "mongodb_database" {
+  type    = string
+  default = "product-domain"
+}
