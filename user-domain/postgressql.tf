@@ -19,7 +19,7 @@ resource "kubernetes_secret_v1" "postgres_secret" {
   }
 
   data = {
-    POSTGRES_PASSWORD = file("${path.module}/.secret/postgres_pw")
+    POSTGRES_PASSWORD = file("${path.module}/../.secret/postgres_pw")
   }
 }
 
@@ -42,19 +42,20 @@ resource "kubernetes_service_v1" "postgres_service" {
     name      = "user-domain-database-postgresql-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
-      type    = "postgresql"
+      type    = "database"
       env     = var.environment
-      mylabel = local.microservicelabel
-      app     = "micro-service-pratice-user"
+      mylabel = var.microservicelabel
+      app     = local.app
     }
 
   }
 
   spec {
     selector = {
-      app     = "micro-service-pratice-user"
-      mylabel = local.microservicelabel
+      app     = local.app
+      mylabel = var.microservicelabel
       type    = "postgresql"
+      env     = var.environment
     }
 
     port {
@@ -69,10 +70,10 @@ resource "kubernetes_stateful_set_v1" "database" {
     name      = "user-domain-database-postgresql"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
+      app     = local.app
+      mylabel = var.microservicelabel
       type    = "postgresql"
       env     = var.environment
-      mylabel = local.microservicelabel
-      app     = "micro-service-pratice-user"
     }
   }
 
@@ -83,17 +84,19 @@ resource "kubernetes_stateful_set_v1" "database" {
 
     selector {
       match_labels = {
-        app     = "micro-service-pratice-user"
-        mylabel = local.microservicelabel
+        app     = local.app
+        mylabel = var.microservicelabel
         type    = "postgresql"
+        env     = var.environment
       }
     }
     template {
       metadata {
         labels = {
-          app     = "micro-service-pratice-user"
-          mylabel = local.microservicelabel
+          app     = local.app
+          mylabel = var.microservicelabel
           type    = "postgresql"
+          env     = var.environment
         }
 
         annotations = {}

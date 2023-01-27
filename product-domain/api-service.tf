@@ -1,20 +1,22 @@
-resource "kubernetes_service_v1" "service_lb" {
+resource "kubernetes_service_v1" "product_service_lb" {
   metadata {
-    name      = "product-domain-database-postgresql-service"
+    name      = "product-domain-service-lb"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
+      app     = local.app
+      mylabel = var.microservicelabel
       type    = "web-service"
       env     = var.environment
-      app     = "micro-service-pratice-product"
-      mylabel = local.microservicelabel
+      expose  = var.expose_label
     }
 
   }
   spec {
     selector = {
-      app     = "micro-service-pratice-product"
-      mylabel = local.microservicelabel
+      app     = local.app
+      mylabel = var.microservicelabel
       type    = "web-service"
+      env     = var.environment
     }
 
     port {
@@ -32,10 +34,10 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
     name      = "product-domain-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
+      app     = local.app
+      mylabel = var.microservicelabel
       type    = "web-service"
       env     = var.environment
-      app     = "micro-service-pratice-product"
-      mylabel = local.microservicelabel
     }
   }
 
@@ -43,18 +45,20 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
     replicas = 1
     selector {
       match_labels = {
-        app     = "micro-service-pratice-product"
-        mylabel = local.microservicelabel
+        app     = local.app
+        mylabel = var.microservicelabel
         type    = "web-service"
+        env     = var.environment
       }
     }
 
     template {
       metadata {
         labels = {
-          app     = "micro-service-pratice-product"
-          mylabel = local.microservicelabel
+          app     = local.app
+          mylabel = var.microservicelabel
           type    = "web-service"
+          env     = var.environment
         }
 
         annotations = {}
@@ -62,7 +66,7 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
       spec {
         container {
           name  = "product-service"
-          image = "ghcr.io/sean0427/micro-service-pratice-product-domain:main"
+          image = "ghcr.io/sean0427/micro-service-product-domain:main"
 
           env_from {
             secret_ref {
