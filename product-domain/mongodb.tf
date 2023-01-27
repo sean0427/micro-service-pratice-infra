@@ -5,9 +5,9 @@ resource "kubernetes_config_map_v1" "mongodb_config" {
   }
 
   data = {
-    mongodb_DB      = var.mongodb_database
-    mongodb_ADDRESS = "${kubernetes_service_v1.mongodb_service.metadata[0].name}.${kubernetes_namespace_v1.namespace.metadata[0].name}"
-    mongodb_PORT    = kubernetes_service_v1.mongodb_service.spec[0].port[0].target_port
+    MONGODB_DB      = var.mongodb_database
+    MONGODB_ADDRESS = "${kubernetes_service_v1.mongodb_service.metadata[0].name}.${kubernetes_namespace_v1.namespace.metadata[0].name}"
+    MONGODB_PORT    = kubernetes_service_v1.mongodb_service.spec[0].port[0].target_port
   }
 }
 
@@ -18,9 +18,8 @@ resource "kubernetes_secret_v1" "mongodb_secret" {
   }
 
   data = {
-    MONGO_INITDB_DATABASE = var.mongodb_database
-    MONGO_INITDB_USERNAME = "app_admin_user"
-    MONGO_INITDB_PASSWORD = file("${path.module}/../.secret/mongodb_app_pw")
+    MONGO_APP_DB_USERNAME = "app_admin_user"
+    MONGO_APP_DB_PASSWORD = file("${path.module}/../.secret/mongodb_app_pw")
   }
 }
 
