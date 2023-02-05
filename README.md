@@ -5,9 +5,16 @@
 
 
 ## Secrets
-   - postgres-password: /.secret/postgres_pw 
-   - redis-password: /.secret/redis_pw 
 
+### User-Domain
+   - postgres-password: /.secret/postgres_pw 
+
+### Auth-Server
+   - redis-password: /.secret/redis_pw 
+   
+### Product-Domain
+   - mongodb_pw: /.secret/mongodb_pw 
+   - mongodb_app_pw: /.secret/mongodb_app_pw 
 
 ## Labels
    - expose: for expose to outside 
