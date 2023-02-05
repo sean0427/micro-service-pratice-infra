@@ -55,7 +55,7 @@ resource "kubernetes_config_map_v1" "mongodb_db_init_config" {
   }
 
   data = {
-    "0-mongo-init.sh" : file("${path.module}/mongo-script/0-mongo-init.sh")
+    "0-mongo-init.js" : file("${path.module}/mongo-script/0-mongo-init.js")
     "11-mongo-init-db.js" : file("${path.module}/mongo-script/11-mongo-init-db.js")
   }
 }
@@ -80,10 +80,11 @@ resource "kubernetes_service_v1" "mongodb_service" {
       type    = "mongodb"
       env     = var.environment
     }
+    cluster_ip = "None"
 
     port {
-      port        = 27017
-      target_port = 27017
+      port        = 5000
+      target_port = 5000
     }
   }
 }
@@ -161,8 +162,17 @@ resource "kubernetes_stateful_set_v1" "database" {
             read_only  = true
           }
 
+          command = [
+            "mongod",
+            "--bind_ip",
+            "0.0.0.0",
+            "--port",
+            "5000"
+          ]
+
+
           port {
-            container_port = 27017
+            container_port = 5000
           }
 
           resources {

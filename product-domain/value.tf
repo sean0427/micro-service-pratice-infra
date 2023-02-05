@@ -33,7 +33,7 @@ variable "mongodb_cpu" {
     requests = string
   })
   default = {
-    limits   = "10m"
+    limits   = "1000m"
     requests = "100m"
   }
 }
@@ -44,7 +44,7 @@ variable "mongodb_memory" {
     requests = string
   })
   default = {
-    limits   = "100Mi"
+    limits   = "1000Mi"
     requests = "100Mi"
   }
 }

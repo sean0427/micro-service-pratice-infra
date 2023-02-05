@@ -1,18 +1,16 @@
-# TODO
-# module "product-domain" {
-#   source = "../product-domain"
-
-# resource_group = local.groups
-# environment    = local.environment
-# namespace_name = "product-domain"
-# }
-
-
 module "general" {
   source = "../general"
 
   resource_group = local.groups
   environment    = local.environment
+}
+
+module "product-domain" {
+  source = "../product-domain"
+
+  resource_group = local.groups
+  environment    = local.environment
+  namespace_name = "p-product-domain"
 }
 
 module "user-domain" {
