@@ -45,6 +45,7 @@ variable "redis_memory" {
     requests = "100Mi"
   }
 }
+
 variable "expose_label" {
   type    = string
   default = "general"
