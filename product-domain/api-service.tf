@@ -27,37 +27,6 @@ resource "kubernetes_service_v1" "product_service" {
   }
 }
 
-
-# resource "kubernetes_service_v1" "product_service_outside_lb" {
-#   metadata {
-#     name      = "product-domain-service-lb"
-#     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
-#     labels = {
-#       app     = local.app
-#       mylabel = var.microservicelabel
-#       type    = "restful-api-service"
-#       env     = var.environment
-#       expose  = var.expose_label
-#     }
-
-#   }
-#   spec {
-#     selector = {
-#       app     = local.app
-#       mylabel = var.microservicelabel
-#       type    = "restful-api-service"
-#       env     = var.environment
-#     }
-
-#     port {
-#       port        = 3000
-#       target_port = 3000
-#       node_port = 30000
-#     }
-#     type = "LoadBalancer"
-#   }
-# }
-
 resource "kubernetes_deployment_v1" "product_domain_service" {
   metadata {
     name      = "product-domain-service"
