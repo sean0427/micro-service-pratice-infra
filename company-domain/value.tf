@@ -26,4 +26,3 @@ variable "expose_label" {
   type    = string
   default = "general"
 }
-

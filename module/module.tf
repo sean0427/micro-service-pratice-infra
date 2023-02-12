@@ -5,6 +5,13 @@ module "general" {
   environment    = local.environment
 }
 
+module "company-domain" {
+  source = "../company-domain"
+  
+  environment = local.environment
+  namespace_name = "p-company-domain"
+}
+
 module "product-domain" {
   source = "../product-domain"
 

@@ -23,7 +23,7 @@ resource "kubernetes_secret_v1" "postgres_secret" {
   }
 }
 
-# might not a good way for implement
+// workaound fix for WSL
 resource "kubernetes_config_map_v1" "postgres_db_init_config" {
   metadata {
     name      = "postgres-database-init-config"
@@ -32,8 +32,10 @@ resource "kubernetes_config_map_v1" "postgres_db_init_config" {
 
   data = {
     "init-database.sh" : file("${path.module}/schema/init-database.sh")
-    "ddl_11-company.sql" : file("${path.module}/schema/ddl/11-company.sql")
-    "dml_12-mockdata_sql" : file("${path.module}/schema/dml/11-mockdata.sql")
+    "ddl_11-user.sql" : file("${path.module}/schema/ddl/11-company.sql")
+    "ddl_20-outbox.sql" : file("${path.module}/schema/ddl/20-outbox.sql")
+    "dml_12-mockdata.sql" : file("${path.module}/schema/dml/11-mockdata.sql") # for testing
+    "dml_21-outbox_trigger.sql": file("${path.module}/schema/dml/21-outbox-trigger.sql")
   }
 }
 
@@ -146,9 +148,10 @@ resource "kubernetes_stateful_set_v1" "database" {
           volume_mount {
             name       = "company-server-volume-claim"
             mount_path = "/var/lib/postgresql/data"
+            read_only  = true
           }
-
         }
+
         volume {
           name = "db-init-volume"
 
@@ -176,7 +179,7 @@ resource "kubernetes_stateful_set_v1" "database" {
         storage_class_name = "local"
         resources {
           requests = {
-            storage = "500Mi"
+            storage = "250Mi"
           }
         }
       }

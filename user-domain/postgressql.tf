@@ -33,7 +33,7 @@ resource "kubernetes_config_map_v1" "postgres_db_init_config" {
   data = {
     "init-database.sh" : file("${path.module}/schema/init-database.sh")
     "ddl_11-user.sql" : file("${path.module}/schema/ddl/11-user.sql")
-    "dml_12-mockdata_sql" : file("${path.module}/schema/dml/11-mockdata.sql")
+    "dml_11-mockdata.sql" : file("${path.module}/schema/dml/11-mockdata.sql")
   }
 }
 
