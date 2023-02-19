@@ -1,0 +1,22 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "../company-domain"
+    },
+    {
+      "path": "../auth-server"
+    },
+    {
+      "path": "../outbox-function-distributed-system-p"
+    },
+    {
+      "path": "../product-domain"
+    },
+    {
+      "path": "../user-domain"
+    }
+  ]
+}
