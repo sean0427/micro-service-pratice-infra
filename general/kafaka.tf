@@ -1,4 +1,4 @@
-resource "kubernetes_service" "kafka_service" {
+resource "kubernetes_service_v1" "kafka_service" {
   metadata {
     name      = "kafka-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name

@@ -8,7 +8,6 @@ resource "kubernetes_service_v1" "company_service" {
       type    = "grpc-service"
       env     = var.environment
     }
-
   }
   spec {
     selector = {
@@ -66,7 +65,7 @@ resource "kubernetes_deployment_v1" "company_domain_service" {
       spec {
         container {
           name              = "company-service"
-          image             = "ghcr.io/sean0427/micro-service-pratice-company-domain:main"
+          image             = "company-domain:latest"
           image_pull_policy = "Always"
 
           env_from {

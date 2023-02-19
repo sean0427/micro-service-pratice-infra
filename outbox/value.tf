@@ -3,18 +3,19 @@ variable "environment" {
   default = "local"
 }
 
-variable "namespace_name" {
-  type    = string
-  default = "test"
-}
-
 variable "resource_group" {
   type    = string
   default = "test"
 }
 
+
+variable "namespace_name" {
+  type    = string
+  default = "test"
+}
+
 locals {
-  app = "company-domain"
+  app = "outbox-service"
 }
 
 variable "microservicelabel" {
@@ -27,7 +28,8 @@ variable "expose_label" {
   default = "general"
 }
 
-variable "outbox_path" {
+
+variable "kafaka_path" {
   type    = string
-  default = "none"
+  default = "general"
 }

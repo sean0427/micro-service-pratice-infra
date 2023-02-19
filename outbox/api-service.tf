@@ -1,6 +1,6 @@
-resource "kubernetes_service_v1" "product_service" {
+resource "kubernetes_service_v1" "outbox_service" {
   metadata {
-    name      = "product-domain-service"
+    name      = "outbox-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
@@ -27,9 +27,20 @@ resource "kubernetes_service_v1" "product_service" {
   }
 }
 
-resource "kubernetes_deployment_v1" "product_domain_service" {
+resource "kubernetes_config_map_v1" "kafaka_config" {
   metadata {
-    name      = "product-domain-service"
+    name      = "kafka-config"
+    namespace = kubernetes_namespace_v1.namespace.metadata[0].name
+  }
+
+  data = {
+    "KAFKA_PATH" = var.kafaka_path
+  }
+}
+
+resource "kubernetes_deployment_v1" "outbox_domain_service" {
+  metadata {
+    name      = "outbox-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
@@ -40,7 +51,7 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
   }
 
   spec {
-    replicas = 1
+    replicas = 2
     selector {
       match_labels = {
         app     = local.app
@@ -63,19 +74,36 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
       }
       spec {
         container {
-          name              = "product-service"
-          image             = "ghcr.io/sean0427/micro-service-pratice-product-domain:main"
-          image_pull_policy = "IfNotPresent"
+          name              = "outbox-service"
+          image             = "outbox-service:latest"
+          image_pull_policy = "Always"
 
           env_from {
-            secret_ref {
-              name = kubernetes_secret_v1.mongodb_secret.metadata[0].name
+            config_map_ref {
+              name = kubernetes_config_map_v1.kafaka_config.metadata[0].name
             }
           }
-          env_from {
-            config_map_ref {
-              name = kubernetes_config_map_v1.mongodb_config.metadata[0].name
+
+          liveness_probe {
+            http_get {
+              path   = "/health"
+              port   = 8080
+              scheme = "HTTP"
             }
+
+            initial_delay_seconds = 10
+            timeout_seconds       = 2
+          }
+
+          readiness_probe {
+            http_get {
+              path   = "/readiness"
+              port   = 8080
+              scheme = "HTTP"
+            }
+
+            initial_delay_seconds = 5
+            timeout_seconds       = 2
           }
 
           port {
@@ -85,7 +113,4 @@ resource "kubernetes_deployment_v1" "product_domain_service" {
       }
     }
   }
-  depends_on = [
-    kubernetes_service_v1.mongodb_service
-  ]
 }
