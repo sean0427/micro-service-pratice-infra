@@ -65,8 +65,8 @@ resource "kubernetes_deployment_v1" "company_domain_service" {
       spec {
         container {
           name              = "company-service"
-          image             = "company-domain:latest"
-          image_pull_policy = "Always"
+          image             = "ghcr.io/sean0427/company-domain-distributed-system-p:main"
+          image_pull_policy = "IfNotPresent"
 
           env_from {
             secret_ref {

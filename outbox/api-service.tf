@@ -75,8 +75,8 @@ resource "kubernetes_deployment_v1" "outbox_domain_service" {
       spec {
         container {
           name              = "outbox-service"
-          image             = "outbox-service:latest"
-          image_pull_policy = "Always"
+          image             = "ghcr.io/sean0427/micro-service-pratice-product-domain:main"
+          image_pull_policy = "IfNotPresent"
 
           env_from {
             config_map_ref {
