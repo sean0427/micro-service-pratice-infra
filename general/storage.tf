@@ -19,6 +19,7 @@ resource "kubernetes_persistent_volume_v1" "storage" {
     }
   }
 }
+
 resource "kubernetes_persistent_volume_v1" "storage2" {
   metadata {
     name = "${var.name_prefix}-kube-general-volume2"
@@ -40,4 +41,3 @@ resource "kubernetes_persistent_volume_v1" "storage2" {
     }
   }
 }
-

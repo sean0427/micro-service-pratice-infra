@@ -1,7 +1,8 @@
-CREATE TYPE outbox_state AS ENUM ('start', 'running', 'finished', 'error', 'unknowun');
+CREATE TYPE outbox_state AS ENUM ('unknowun', 'start', 'running', 'finished', 'error');
 
-CREATE TABLE outbox {
+CREATE TABLE outboxes (
+  id BIGSERIAL NOT NULL,
   query VARCHAR NOT NULL,
-  time TIMESTAMP DEFAULT NOT,
-  aync_state outbox_state DEFAULT,
-}
+  time TIMESTAMP NOT NULL DEFAULT NOW(),
+  aync_state outbox_state
+);

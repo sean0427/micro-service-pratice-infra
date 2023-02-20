@@ -13,5 +13,5 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER push_to_api_trigger
-AFTER INSERT ON outbox
+AFTER INSERT ON outboxes
 FOR EACH ROW EXECUTE FUNCTION push_to_api();  

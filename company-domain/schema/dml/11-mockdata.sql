@@ -1,4 +1,4 @@
-INSERT INTO companies (name, email, address, contact, createby, updateby) 
+INSERT INTO companies (name, email, address, contact, created_by, updated_by) 
 VALUES 
   ('Company 1', 'company1@email.com', 'Address 1', 'Contact 1', 'User 1', 'User 1'),
   ('Company 2', 'company2@email.com', 'Address 2', 'Contact 2', 'User 2', 'User 2'),
