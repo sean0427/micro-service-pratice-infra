@@ -6,10 +6,10 @@ resource "kubernetes_config_map_v1" "postgres_config" {
 
   data = {
     POSTGRES_DB      = "test"
-    POSTGRES_USER = "admin"
+    POSTGRES_USER    = "admin"
     POSTGRES_ADDRESS = "${kubernetes_service_v1.postgres_service.metadata[0].name}.${kubernetes_namespace_v1.namespace.metadata[0].name}"
     POSTGRES_PORT    = kubernetes_service_v1.postgres_service.spec[0].port[0].target_port
-    OUTOBX_PATH      = var.outbox_path
+    OUTBOX_PATH      = var.outbox_path
   }
 }
 
@@ -36,7 +36,7 @@ resource "kubernetes_config_map_v1" "postgres_db_init_config" {
     "ddl_11-company.sql" : file("${path.module}/schema/ddl/11-company.sql")
     "ddl_20-outbox.sql" : file("${path.module}/schema/ddl/20-outbox.sql")
     "dml_12-mockdata.sql" : file("${path.module}/schema/dml/11-mockdata.sql") # for testing
-    "dml_21-outbox_trigger.sql" : file("${path.module}/schema/dml/21-outbox-trigger.sql")
+    # "dml_21-outbox_trigger.sql" : file("${path.module}/schema/dml/21-outbox-trigger.sql")
   }
 }
 
@@ -105,10 +105,9 @@ resource "kubernetes_stateful_set_v1" "database" {
         annotations = {}
       }
       spec {
-
         container {
           name              = "company-domain-database-postgresql"
-          image             = "postgres:15-alpine"
+          image             = "ghcr.io/sean0427/postgres-plpy:15"
           image_pull_policy = "IfNotPresent"
 
           env_from {

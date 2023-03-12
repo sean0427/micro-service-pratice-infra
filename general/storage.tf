@@ -36,7 +36,7 @@ resource "kubernetes_persistent_volume_v1" "storage2" {
     access_modes       = ["ReadWriteMany"]
     persistent_volume_source {
       host_path {
-        path = "/var/opt/kube-data"
+        path = "/var/opt/kube-data2"
       }
     }
   }
