@@ -32,7 +32,7 @@ resource "kubernetes_config_map_v1" "kafka_config" {
     KAFKA_CFG_CONTROLLER_LISTENER_NAMES      = "CONTROLLER"
     KAFKA_CFG_LISTENERS                      = "PLAINTEXT://:9092,CONTROLLER://:9093"
     KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP = "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
-    KAFKA_CFG_ADVERTISED_LISTENERS           = "PLAINTEXT://127.0.0.1:9092"
+    KAFKA_CFG_ADVERTISED_LISTENERS           = "PLAINTEXT://${kubernetes_service_v1.kafka_service.metadata[0].name}.${kubernetes_namespace_v1.namespace.metadata[0].name}:${kubernetes_service_v1.kafka_service.spec[0].port[0].port}"
     KAFKA_BROKER_ID                          = "1"
     KAFKA_CFG_CONTROLLER_QUORUM_VOTERS       = "1@127.0.0.1:9093"
     ALLOW_PLAINTEXT_LISTENER                 = "yes"
@@ -93,6 +93,12 @@ resource "kubernetes_stateful_set_v1" "kafka-message-broker" {
             config_map_ref {
               name = kubernetes_config_map_v1.kafka_config.metadata[0].name
             }
+          }
+
+          volume_mount {
+            name       = "/bitnami/kafka"
+            mount_path = "/bitnami/kafka"
+            read_only  = false
           }
         }
       }

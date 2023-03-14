@@ -5,7 +5,7 @@ variable "environment" {
 
 variable "namespace_name" {
   type    = string
-  default = "test"
+  default = "general"
 }
 
 variable "resource_group" {
