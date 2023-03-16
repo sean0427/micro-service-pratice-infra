@@ -5,7 +5,7 @@ variable "environment" {
 
 variable "namespace_name" {
   type    = string
-  default = "general"
+  default = "test"
 }
 
 variable "resource_group" {
@@ -13,10 +13,13 @@ variable "resource_group" {
   default = "test"
 }
 
+locals {
+  app = "company-domain"
+}
+
 variable "microservicelabel" {
   type    = string
   default = "microservicelabel"
-
 }
 
 variable "expose_label" {
@@ -24,8 +27,7 @@ variable "expose_label" {
   default = "general"
 }
 
-
-variable "name_prefix" {
+variable "outbox_path" {
   type    = string
-  default = "general"
+  default = "none"
 }

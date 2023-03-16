@@ -5,6 +5,23 @@ module "general" {
   environment    = local.environment
 }
 
+module "general-outbox" {
+  source = "../outbox"
+
+  environment    = local.environment
+  namespace_name = "g-outbox-service"
+
+  kafaka_path = module.general.kafaka_endpoint_cluster_ip
+}
+
+module "company-domain" {
+  source = "../company-domain"
+
+  environment    = local.environment
+  namespace_name = "p-company-domain"
+  outbox_path    = module.general-outbox.web-serivce-cluster-ip
+}
+
 module "product-domain" {
   source = "../product-domain"
 

@@ -9,6 +9,7 @@ resource "kubernetes_config_map_v1" "postgres_config" {
     POSTGRES_USER    = "admin"
     POSTGRES_ADDRESS = "${kubernetes_service_v1.postgres_service.metadata[0].name}.${kubernetes_namespace_v1.namespace.metadata[0].name}"
     POSTGRES_PORT    = kubernetes_service_v1.postgres_service.spec[0].port[0].target_port
+    OUTBOX_PATH      = var.outbox_path
   }
 }
 
@@ -23,7 +24,7 @@ resource "kubernetes_secret_v1" "postgres_secret" {
   }
 }
 
-# might not a good way for implement
+// workaound fix for WSL
 resource "kubernetes_config_map_v1" "postgres_db_init_config" {
   metadata {
     name      = "postgres-database-init-config"
@@ -32,14 +33,16 @@ resource "kubernetes_config_map_v1" "postgres_db_init_config" {
 
   data = {
     "init-database.sh" : file("${path.module}/schema/init-database.sh")
-    "ddl_11-user.sql" : file("${path.module}/schema/ddl/11-user.sql")
-    "dml_11-mockdata.sql" : file("${path.module}/schema/dml/11-mockdata.sql")
+    "ddl_11-company.sql" : file("${path.module}/schema/ddl/11-company.sql")
+    "ddl_20-outbox.sql" : file("${path.module}/schema/ddl/20-outbox.sql")
+    "dml_12-mockdata.sql" : file("${path.module}/schema/dml/11-mockdata.sql") # for testing
+    # "dml_21-outbox_trigger.sql" : file("${path.module}/schema/dml/21-outbox-trigger.sql")
   }
 }
 
 resource "kubernetes_service_v1" "postgres_service" {
   metadata {
-    name      = "user-domain-database-postgresql-service"
+    name      = "company-domain-database-postgresql-service"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       type    = "database"
@@ -67,7 +70,7 @@ resource "kubernetes_service_v1" "postgres_service" {
 
 resource "kubernetes_stateful_set_v1" "database" {
   metadata {
-    name      = "user-domain-database-postgresql"
+    name      = "company-domain-database-postgresql"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     labels = {
       app     = local.app
@@ -102,10 +105,9 @@ resource "kubernetes_stateful_set_v1" "database" {
         annotations = {}
       }
       spec {
-
         container {
-          name              = "user-domain-database-postgresql"
-          image             = "postgres:15-alpine"
+          name              = "company-domain-database-postgresql"
+          image             = "ghcr.io/sean0427/postgres-plpy:15"
           image_pull_policy = "IfNotPresent"
 
           env_from {
@@ -144,11 +146,12 @@ resource "kubernetes_stateful_set_v1" "database" {
 
 
           volume_mount {
-            name       = "user-server-volume-claim"
+            name       = "company-server-volume-claim"
             mount_path = "/var/lib/postgresql/data"
+            read_only  = false
           }
-
         }
+
         volume {
           name = "db-init-volume"
 
@@ -168,7 +171,7 @@ resource "kubernetes_stateful_set_v1" "database" {
 
     volume_claim_template {
       metadata {
-        name      = "user-server-volume-claim"
+        name      = "company-server-volume-claim"
         namespace = kubernetes_namespace_v1.namespace.metadata[0].name
       }
       spec {
@@ -176,7 +179,7 @@ resource "kubernetes_stateful_set_v1" "database" {
         storage_class_name = "local"
         resources {
           requests = {
-            storage = "500Mi"
+            storage = "250Mi"
           }
         }
       }
