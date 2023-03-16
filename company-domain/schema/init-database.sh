@@ -13,12 +13,17 @@ import json
 
 def push_to_api(new_record):
     url = os.getenv('OUTBOX_PATH')
+    topic = os.getenv('DOMAIN')
+
     data = json.dumps(new_record).encode('utf-8')
-    request = urllib.request.Request(f'http://{url}?topic=company&entity_id={new_record["id"]}', data=data, method='POST') 
+
+    request = urllib.request.Request(f'http://{url}?topic={topic}&entity_id={new_record["id"]}', data=data, method='POST') 
     request.add_header('Content-Type', 'application/json') 
     with urllib.request.urlopen(request) as response:
         html = response.read()
-        print(html)
+        plpy.debug(html)
+    plpy.notice("TD['new']:", TD["new"])
+
     return new_record
 
 return push_to_api(TD['new'])
@@ -27,5 +32,5 @@ return push_to_api(TD['new'])
 
 CREATE TRIGGER push_to_api_trigger
 AFTER INSERT ON outboxes
-FOR EACH ROW EXECUTE FUNCTION push_to_api(NEW);
+FOR EACH ROW EXECUTE FUNCTION push_to_api();
 EOSQL

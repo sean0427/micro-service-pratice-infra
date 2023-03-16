@@ -10,6 +10,7 @@ resource "kubernetes_config_map_v1" "postgres_config" {
     POSTGRES_ADDRESS = "${kubernetes_service_v1.postgres_service.metadata[0].name}.${kubernetes_namespace_v1.namespace.metadata[0].name}"
     POSTGRES_PORT    = kubernetes_service_v1.postgres_service.spec[0].port[0].target_port
     OUTBOX_PATH      = var.outbox_path
+    DOMAIN           = "company"
   }
 }
 
