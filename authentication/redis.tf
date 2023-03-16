@@ -26,6 +26,11 @@ resource "kubernetes_service_v1" "redis_service" {
   }
 }
 
+resource "random_password" "password" {
+  length           = 16
+  special          = true
+  override_special = "_%@"
+}
 
 resource "kubernetes_secret_v1" "redis_secret" {
   metadata {
@@ -34,7 +39,7 @@ resource "kubernetes_secret_v1" "redis_secret" {
   }
 
   data = {
-    REDIS_PASSWORD = file("${path.module}/../.secret/redis_pw")
+    REDIS_PASSWORD = random_password.password.result
   }
 }
 

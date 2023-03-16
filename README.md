@@ -6,15 +6,4 @@
 
 ## Secrets
 
-### User-Domain
-   - postgres-password: /.secret/postgres_pw 
-
-### Auth-Server
-   - redis-password: /.secret/redis_pw 
-   
-### Product-Domain
-   - mongodb_pw: /.secret/mongodb_pw 
-   - mongodb_app_pw: /.secret/mongodb_app_pw 
-
-## Labels
-   - expose: for expose to outside 
+all the secret using random password, you can find it on kubernetes secret.
