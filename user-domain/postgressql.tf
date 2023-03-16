@@ -12,6 +12,12 @@ resource "kubernetes_config_map_v1" "postgres_config" {
   }
 }
 
+resource "random_password" "password" {
+  length           = 16
+  special          = true
+  override_special = "_%@"
+}
+
 resource "kubernetes_secret_v1" "postgres_secret" {
   metadata {
     name      = "postgres-secret"
@@ -19,7 +25,7 @@ resource "kubernetes_secret_v1" "postgres_secret" {
   }
 
   data = {
-    POSTGRES_PASSWORD = file("${path.module}/../.secret/postgres_pw")
+    POSTGRES_PASSWORD = random_password.password.result
   }
 }
 

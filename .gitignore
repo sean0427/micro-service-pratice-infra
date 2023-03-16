@@ -1,7 +1,5 @@
 *.deb
 
-.secret
-
 # terraform
 .terraform
 terraform.tfstate

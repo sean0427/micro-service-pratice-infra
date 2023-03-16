@@ -11,6 +11,19 @@ resource "kubernetes_config_map_v1" "mongodb_config" {
   }
 }
 
+resource "random_password" "app_password" {
+  length           = 30
+  special          = true
+  override_special = "_%@"
+}
+
+
+resource "random_password" "password" {
+  length           = 30
+  special          = true
+  override_special = "_%@"
+}
+
 resource "kubernetes_secret_v1" "mongodb_secret" {
   metadata {
     name      = "mongodb-secret"
@@ -19,7 +32,7 @@ resource "kubernetes_secret_v1" "mongodb_secret" {
 
   data = {
     MONGO_APP_DB_USERNAME = "app_admin_user"
-    MONGO_APP_DB_PASSWORD = file("${path.module}/../.secret/mongodb_app_pw")
+    MONGO_APP_DB_PASSWORD = random_password.app_password.result
   }
 }
 
@@ -43,7 +56,7 @@ resource "kubernetes_secret_v1" "mongodb_root_secret" {
   }
 
   data = {
-    MONGO_INITDB_ROOT_PASSWORD = file("${path.module}/../.secret/mongodb_pw")
+    MONGO_INITDB_ROOT_PASSWORD = random_password.password.result
   }
 }
 
