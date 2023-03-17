@@ -27,7 +27,7 @@ resource "kubernetes_service_v1" "redis_service" {
 }
 
 resource "random_password" "password" {
-  length           = 16
+  length           = 50
   special          = true
   override_special = "_%@"
 }
