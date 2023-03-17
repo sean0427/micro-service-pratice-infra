@@ -9,11 +9,13 @@ resource "kubernetes_config_map_v1" "postgres_config" {
     POSTGRES_USER    = "admin"
     POSTGRES_ADDRESS = "${kubernetes_service_v1.postgres_service.metadata[0].name}.${kubernetes_namespace_v1.namespace.metadata[0].name}"
     POSTGRES_PORT    = kubernetes_service_v1.postgres_service.spec[0].port[0].target_port
+    OUTBOX_PATH      = var.outbox_path
+    DOMAIN           = "user"
   }
 }
 
 resource "random_password" "password" {
-  length           = 16
+  length           = 50
   special          = true
   override_special = "_%@"
 }
@@ -108,10 +110,9 @@ resource "kubernetes_stateful_set_v1" "database" {
         annotations = {}
       }
       spec {
-
         container {
           name              = "user-domain-database-postgresql"
-          image             = "postgres:15-alpine"
+          image             = "ghcr.io/sean0427/postgres-plpy:15"
           image_pull_policy = "IfNotPresent"
 
           env_from {
