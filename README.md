@@ -2,7 +2,7 @@
 
 
 ## Related Projects
-this project is infra for distributed-system-pratice-prjects, the Related projects including:
+this project is infra for distributed-system-pratice-project, the Related projects including:
 
 - [Product Domain](https://github.com/sean0427/micro-service-pratice-product-domain)
 - [Company Domain](https://github.com/sean0427/company-domain-distributed-system-p)
@@ -11,7 +11,6 @@ this project is infra for distributed-system-pratice-prjects, the Related projec
 - [General Outbox Service](https://github.com/sean0427/outbox-function-distributed-system-p)
 - [General Tools / helpers](https://github.com/sean0427/tool-distributed-system-p)
 
-and infra diagram is on [diagrams.drawio](https://github.com/sean0427/micro-service-pratice-infra/blob/dev/diagrams.drawio), it is a drawio file.
 
 ## document
 [Notion](https://sean810427.notion.site/Micro-Service-d5da9f17db004a4d9508be42f306d1fd) (WIP)
@@ -19,3 +18,7 @@ and infra diagram is on [diagrams.drawio](https://github.com/sean0427/micro-serv
 ## Secrets
 
 all the secret using random password, you can find it on kubernetes secret.
+
+## Diagram
+![infrastruct diagra](./infrastruct-diagram.png)
+[diagrams.drawio](./diagrams.drawio)
